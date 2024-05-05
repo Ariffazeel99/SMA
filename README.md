@@ -24,7 +24,7 @@ Install the required Python packages:
 
 ```bash
 pip install python-dotenv requests
-
+```
 
 Usage
 
