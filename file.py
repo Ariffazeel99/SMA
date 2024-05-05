@@ -1,5 +1,6 @@
 import os
 import requests
+import json
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -22,6 +23,10 @@ response = requests.get(url)
 # Parse the response as JSON
 data = response.json()
 
-# Print the page information
-print("Page Information:")
-print(data)
+# Output the data to a JSON file
+output_file = 'output1.json'
+with open(output_file, 'w') as file:
+    json.dump(data, file, indent=4)
+
+# Print a confirmation message
+print(f"Page information has been saved to {output_file}.")
