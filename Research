@@ -1,1 +1,15 @@
+Analyze Page Data Using the Graph API
+Now that you have the Page Access Token, you can make requests to analyze the page data.
 
+Example API Calls:
+
+# Get Basic Page Information:
+https://graph.facebook.com/v17.0/{PAGE_ID}?fields=id,name,about,fan_count&access_token={PAGE_ACCESS_TOKEN}
+
+Results 
+{
+    "id": "101569698587025",
+    "name": "Khilji bhai",
+    "about": "Gameplay",
+    "fan_count": 1384
+}
