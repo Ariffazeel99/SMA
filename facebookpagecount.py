@@ -24,7 +24,7 @@ response = requests.get(url)
 data = response.json()
 
 # Output the data to a JSON file
-output_file = 'output1.json'
+output_file = 'Facebookpage_count.json'
 with open(output_file, 'w') as file:
     json.dump(data, file, indent=4)
 
