@@ -13,22 +13,30 @@ if not PAGE_ID or not PAGE_ACCESS_TOKEN:
     raise ValueError("Missing PAGE_ID or PAGE_ACCESS_TOKEN from environment variables")
 
 # Define the metrics to query
-metrics = "page_fan_adds,page_fan_removes,page_impressions,page_engaged_users"
-url = f"https://graph.facebook.com/v16.0/{PAGE_ID}/insights"
+metrics = "page_impressions,page_engaged_users"
+url = f"https://graph.facebook.com/v19.0/{PAGE_ID}/insights"
 params = {
     "metric": metrics,
     "access_token": PAGE_ACCESS_TOKEN
 }
 
-# Perform the API request
-response = requests.get(url, params=params)
+try:
+    # Perform the API request
+    response = requests.get(url, params=params)
+    response.raise_for_status()
 
-if response.status_code == 200:
     # Parse and save the JSON response
     data = response.json()
     output_file = 'facebook_insights.json'
     with open(output_file, 'w') as f:
         json.dump(data, f, indent=4)
     print(f"Insights data saved to {output_file}")
-else:
-    print(f"Error: {response.status_code} - {response.text}")
+
+except requests.exceptions.HTTPError as errh:
+    print(f"HTTP Error: {errh}")
+except requests.exceptions.ConnectionError as errc:
+    print(f"Error Connecting: {errc}")
+except requests.exceptions.Timeout as errt:
+    print(f"Timeout Error: {errt}")
+except requests.exceptions.RequestException as err:
+    print(f"Something went wrong: {err}")
