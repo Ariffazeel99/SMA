@@ -1,38 +1,34 @@
-import os
 import requests
 import json
+import os
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
-
-# Retrieve environment variables
-PAGE_ACCESS_TOKEN = os.getenv('PAGE_ACCESS_TOKEN')
 PAGE_ID = os.getenv('PAGE_ID')
+PAGE_ACCESS_TOKEN = os.getenv('PAGE_ACCESS_TOKEN')
 
-# Ensure both environment variables are set
-if not PAGE_ACCESS_TOKEN or not PAGE_ID:
-    raise ValueError("Please ensure PAGE_ACCESS_TOKEN and PAGE_ID are set in the .env file.")
+# Check if both variables were loaded
+if not PAGE_ID or not PAGE_ACCESS_TOKEN:
+    raise ValueError("Missing PAGE_ID or PAGE_ACCESS_TOKEN from environment variables")
 
-# Graph API URL with valid insights metrics
-# Construct the API URL
-base = 'https://graph.facebook.com/v19.0'
-node = f'/{PAGE_ID}/insights/page_impressions'
-url = base + node
+# Define the metrics to query
+metrics = "page_fan_adds,page_fan_removes,page_impressions,page_engaged_users"
+url = f"https://graph.facebook.com/v16.0/{PAGE_ID}/insights"
+params = {
+    "metric": metrics,
+    "access_token": PAGE_ACCESS_TOKEN
+}
 
-# Set parameters (e.g., period: 'week')
-parameters = {'period': 'week', 'access_token': PAGE_ACCESS_TOKEN}
+# Perform the API request
+response = requests.get(url, params=params)
 
-# Make the API request
-response = requests.get(url, params=parameters)
-data = json.loads(response.text.encode('utf-8'))
-# Make the API request
-
-
-# Output the data to a JSON file
-output_file = 'helpful_page_insights.json'
-with open(output_file, 'w') as file:
-    json.dump(data, file, indent=4)
-
-# Print a confirmation message
-print(f"Page insights have been saved to {output_file}.")
+if response.status_code == 200:
+    # Parse and save the JSON response
+    data = response.json()
+    output_file = 'facebook_insights.json'
+    with open(output_file, 'w') as f:
+        json.dump(data, f, indent=4)
+    print(f"Insights data saved to {output_file}")
+else:
+    print(f"Error: {response.status_code} - {response.text}")
